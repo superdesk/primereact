@@ -28,6 +28,7 @@ interface DialogProps {
     onMaximize?(e: {originalEvent: Event, maximized: boolean}): void;
     onHide(): void;
     onShow?(): void;
+    'data-test-id'?: string;
 }
 
 export class Dialog extends React.Component<DialogProps,any> {}

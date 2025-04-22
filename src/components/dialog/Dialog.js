@@ -67,7 +67,8 @@ export class Dialog extends Component {
         ariaCloseIconLabel: PropTypes.string,
         focusOnShow: PropTypes.bool,
         maximized: PropTypes.bool,
-        onMaximize: PropTypes.func
+        onMaximize: PropTypes.func,
+        'data-test-id': PropTypes.string,
     };
 
     constructor(props) {
@@ -386,8 +387,16 @@ export class Dialog extends Component {
             <div ref={(el) => this.mask = el} className={maskClassName} onClick={this.onMaskClick}>
                 <CSSTransition classNames="p-dialog" timeout={transitionTimeout} in={this.props.visible} unmountOnExit
                     onEntered={this.onEntered} onExit={this.onExit} onExited={this.onExited}>
-                    <div ref={el => this.dialog = el} id={this.id} className={className} style={this.props.style}
-                         aria-labelledby={this.id + '_header'} role="dialog" aria-modal={this.props.model}>
+                    <div
+                        ref={el => this.dialog = el}
+                        id={this.id}
+                        className={className}
+                        style={this.props.style}
+                        aria-labelledby={this.id + '_header'}
+                        role="dialog"
+                        aria-modal={this.props.model}
+                        data-test-id={this.props['data-test-id']}
+                    >
                         {header}
                         {content}
                         {footer}
