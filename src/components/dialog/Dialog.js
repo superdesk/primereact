@@ -386,8 +386,8 @@ export class Dialog extends Component {
 
         const themeAttributes = {};
 
-        if (this.prop.superdeskTheme != null) {
-            themeAttributes['data-theme'] = this.prop.superdeskTheme;
+        if (this.props.superdeskTheme != null) {
+            themeAttributes['data-theme'] = this.props.superdeskTheme;
         }
 
         return (
