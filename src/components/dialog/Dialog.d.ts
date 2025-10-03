@@ -29,6 +29,7 @@ interface DialogProps {
     onHide(): void;
     onShow?(): void;
     'data-test-id'?: string;
+    superdeskTheme?: string;
 }
 
 export class Dialog extends React.Component<DialogProps,any> {}

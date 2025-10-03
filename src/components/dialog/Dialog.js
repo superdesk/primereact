@@ -69,6 +69,7 @@ export class Dialog extends Component {
         maximized: PropTypes.bool,
         onMaximize: PropTypes.func,
         'data-test-id': PropTypes.string,
+        superdeskTheme: PropTypes.string,
     };
 
     constructor(props) {
@@ -383,8 +384,14 @@ export class Dialog extends Component {
             exit: this.props.position === 'center' ? 150 : 300
         };
 
+        const themeAttributes = {};
+
+        if (this.prop.superdeskTheme != null) {
+            themeAttributes['data-theme'] = this.prop.superdeskTheme;
+        }
+
         return (
-            <div ref={(el) => this.mask = el} className={maskClassName} onClick={this.onMaskClick}>
+            <div ref={(el) => this.mask = el} className={maskClassName} onClick={this.onMaskClick} {...themeAttributes}>
                 <CSSTransition classNames="p-dialog" timeout={transitionTimeout} in={this.props.visible} unmountOnExit
                     onEntered={this.onEntered} onExit={this.onExit} onExited={this.onExited}>
                     <div
