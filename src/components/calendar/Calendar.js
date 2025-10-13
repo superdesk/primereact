@@ -12,6 +12,24 @@ import { Ripple } from '../ripple/Ripple';
 import UniqueComponentId from '../utils/UniqueComponentId';
 import ConnectedOverlayScrollHandler from '../utils/ConnectedOverlayScrollHandler';
 
+// interface IProps {
+//     value: string;
+//     onChange(value: string): void;
+//     options: Array<{id: string; label: string}>;
+// }
+
+class SelectStandard extends React.PureComponent {
+    render () {
+        return (
+            <select onChange={(event) => this.props.onChange(event.target.value)} value={this.props.value}>
+                {
+                    this.props.options.map(({id, label}) => <option key={id} value={id}>{label}</option>)
+                }
+            </select>
+        );
+    }
+}
+
 export class Calendar extends Component {
 
     static defaultProps = {
@@ -65,7 +83,9 @@ export class Calendar extends Component {
         panelStyle: null,
         panelClassName: null,
         monthNavigator: false,
+        monthNavigatorComponent: undefined,
         yearNavigator: false,
+        yearNavigatorComponent: undefined,
         disabledDates: null,
         disabledDays: null,
         minDate: null,
@@ -612,20 +632,20 @@ export class Calendar extends Component {
         event.preventDefault();
     }
 
-    onMonthDropdownChange(event) {
+    onMonthDropdownChange(value) {
         const currentViewDate = this.getViewDate();
         let newViewDate = new Date(currentViewDate.getTime());
-        newViewDate.setMonth(parseInt(event.target.value, 10));
+        newViewDate.setMonth(parseInt(value, 10));
 
-        this.updateViewDate(event, newViewDate);
+        this.updateViewDate(new Event('click'), newViewDate);
     }
 
-    onYearDropdownChange(event) {
+    onYearDropdownChange(value) {
         const currentViewDate = this.getViewDate();
         let newViewDate = new Date(currentViewDate.getTime());
-        newViewDate.setFullYear(parseInt(event.target.value, 10));
+        newViewDate.setFullYear(parseInt(value, 10));
 
-        this.updateViewDate(event, newViewDate);
+        this.updateViewDate(new Event('click'), newViewDate);
     }
 
     onTodayButtonClick(event) {
@@ -2437,17 +2457,22 @@ export class Calendar extends Component {
             let viewDate = this.getViewDate();
             let viewMonth = viewDate.getMonth();
 
+            const options = this.props.locale.monthNames.flatMap((month, index) => {
+                if ((!this.isInMinYear(viewDate) || index >= this.props.minDate.getMonth()) && (!this.isInMaxYear(viewDate) || index <= this.props.maxDate.getMonth())) {
+                    return [{id: index.toString(), label: month.toString()}];
+                }
+
+                return [];
+            });
+
+            const Component = this.props.monthNavigatorComponent || SelectStandard;
+
             return (
-                <select className="p-datepicker-month" onChange={this.onMonthDropdownChange} value={viewMonth}>
-                    {
-                        this.props.locale.monthNames.map((month, index) => {
-                            if ((!this.isInMinYear(viewDate) || index >= this.props.minDate.getMonth()) && (!this.isInMaxYear(viewDate) || index <= this.props.maxDate.getMonth())) {
-                                return <option key={month} value={index}>{month}</option>
-                            }
-                            return null;
-                        })
-                    }
-                </select>
+                <Component
+                    value={viewMonth.toString()}
+                    options={options}
+                    onChange={(value) => this.onMonthDropdownChange(value)}
+                />
             );
         }
         else {
@@ -2471,17 +2496,18 @@ export class Calendar extends Component {
             let viewDate = this.getViewDate();
             let viewYear = viewDate.getFullYear();
 
+            const options = yearOptions.filter((year) => {
+                return !(this.props.minDate && this.props.minDate.getFullYear() > year) && !(this.props.maxDate && this.props.maxDate.getFullYear() < year);
+            }).map((val) => ({id: val.toString(), label: val.toString()}));
+
+            const Component = this.props.yearNavigatorComponent || SelectStandard;
+
             return (
-                <select className="p-datepicker-year" onChange={this.onYearDropdownChange} value={viewYear}>
-                    {
-                        yearOptions.map(year => {
-                            if (!(this.props.minDate && this.props.minDate.getFullYear() > year) && !(this.props.maxDate && this.props.maxDate.getFullYear() < year)) {
-                                return <option key={year} value={year}>{year}</option>
-                            }
-                            return null;
-                        })
-                    }
-                </select>
+                <Component
+                    value={viewYear.toString()}
+                    options={options}
+                    onChange={(value) => this.onYearDropdownChange(value)}
+                />
             );
         }
         else {

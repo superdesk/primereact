@@ -62,7 +62,9 @@ interface CalendarProps {
     panelStyle?: object;
     panelClassName?: string;
     monthNavigator?: boolean;
+    monthNavigatorComponent?: React.ComponentType<{value: string; options: Array<{id: string; label: string}>; onChange(id: string): void;}>;
     yearNavigator?: boolean;
+    yearNavigatorComponent?: React.ComponentType<{value: string; options: Array<{id: string; label: string}>; onChange(id: string): void;}>;
     disabledDates?: Date[];
     disabledDays?: number[];
     minDate?: Date;
